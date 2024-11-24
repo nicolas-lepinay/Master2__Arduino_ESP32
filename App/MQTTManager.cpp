@@ -1,4 +1,5 @@
 #include "MQTTManager.h"
+#include <ArduinoJson.h>
 
 // 📡 Configuration MQTT sécurisé
 WiFiClientSecure secureClient;
@@ -37,7 +38,7 @@ void mqttReconnect() {
     }
 }
 
-// 📩 Callback MQTT
+// 📩 Callback MQTT (traitement des messages reçus)
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
     char message[length + 1];
     memcpy(message, payload, length);
@@ -59,4 +60,51 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
         break;
         }
     }
+}
+
+
+// 📌 Publication d'un événement sur MQTT
+void publishEvent(const char* equipmentEsp32Id, const char* houseId, const bool state, const char* value, const char* unit) {
+    // Préparation du payload JSON
+    DynamicJsonDocument doc(256);
+    doc["equipmentEsp32Id"] = equipmentEsp32Id;
+    doc["houseId"] = houseId;
+    doc["state"] = state;
+    doc["value"] = value;
+    doc["unit"] = unit;
+
+    String payload;
+    serializeJson(doc, payload);
+
+    const char* topic = "ADD/EVENT";
+    if (client.publish(topic, payload.c_str())) {
+        Serial.println("Événement publié avec succès sur MQTT !");
+    } else {
+        Serial.println("Échec de la publication MQTT !");
+    }
+}
+
+// 📌 Collecte et publication des données des capteurs
+void publishData() {
+    const char* houseId = "KEVIN";
+
+    // Capteur d'humidité
+    int humidityValue = analogRead(HUMIDITY_SENSOR_PIN);
+    publishEvent("HUMIDITY_SENSOR", houseId, true, String(humidityValue).c_str(), "%");
+
+    // Capteur de température
+    int temperatureValue = analogRead(TEMP_SENSOR_PIN);
+    publishEvent("TEMP_SENSOR", houseId, true, String(temperatureValue).c_str(), "°C");
+
+    // Capteur de gaz
+    bool gasDetected = digitalRead(GAS_SENSOR_PIN);
+    publishEvent("GAS_SENSOR", houseId, gasDetected, gasDetected ? "DETECTED" : "NOT_DETECTED", nullptr);
+
+    // Détecteur de fumée
+    bool smokeDetected = digitalRead(SMOKE_SENSOR_PIN);
+    publishEvent("SMOKE_SENSOR", houseId, smokeDetected, smokeDetected ? "DETECTED" : "NOT_DETECTED", nullptr);
+
+    // Détecteur de mouvements
+    bool motionDetected = digitalRead(MOTION_SENSOR_PIN);
+    publishEvent("MOTION_SENSOR", houseId, motionDetected, motionDetected ? "DETECTED" : "NOT_DETECTED", nullptr);
 }
