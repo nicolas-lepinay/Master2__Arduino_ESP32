@@ -36,6 +36,6 @@ void loop() {
 
     if (millis() - lastUpdate >= interval) {
         lastUpdate = millis();
-        collectAndSendData(); // Appel pour envoyer des données à l'API
+        publishData(); // Publications des données des capteurs sur MQTT
     }
 }
