@@ -1,5 +1,6 @@
-#include "MQTTManager.h"
 #include <ArduinoJson.h>
+#include "MQTTManager.h"
+#include "EquipmentManager.h" // Inclure pour accéder à 'dht'
 
 // 📋 Configuration serveur MQTT
 const char* mqtt_host = "b5f2bf8397624117be2142697084afa1.s1.eu.hivemq.cloud"; // Adresse du broker MQTT
@@ -85,11 +86,13 @@ void publishData() {
     const char* houseId = "KEVIN";
 
     // Capteur d'humidité
-    int humidityValue = analogRead(HUMIDITY_SENSOR_PIN);
+    //int humidityValue = analogRead(HUMIDITY_SENSOR_PIN);
+    float humidityValue = dht.readHumidity();
     publishEvent("HUMIDITY_SENSOR", houseId, true, String(humidityValue).c_str(), "%");
 
     // Capteur de température
-    int temperatureValue = analogRead(TEMP_SENSOR_PIN);
+    //int temperatureValue = analogRead(TEMP_SENSOR_PIN);
+    float temperatureValue = dht.readTemperature();
     publishEvent("TEMP_SENSOR", houseId, true, String(temperatureValue).c_str(), "°C");
 
     // Capteur de gaz

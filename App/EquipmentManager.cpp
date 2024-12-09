@@ -4,14 +4,17 @@
 Servo windowServo;
 Servo doorServo;
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+DHT dht(HUMIDITY_SENSOR_PIN, DHT11);
+Adafruit_NeoPixel pixels(4, RGB_LED_PIN, NEO_GRB + NEO_KHZ800);
 
 Equipment equipmentList[] = {
     { LED_PIN, "SET/LED", setDigitalOutput },
     { FAN_PIN, "SET/FAN", setAnalogOutput },
     { BUZZER_PIN, "SET/BUZZER", setBuzzerState },
-    { -1, "SET/WINDOW", [](int, const char* payload) { setServoPosition(windowServo, payload); }},
-    { -1, "SET/DOOR", [](int, const char* payload) { setServoPosition(doorServo, payload); }},
-    { -1, "SET/LCD", setLCDContent },
+    { -1, "SET/WINDOW_SERVO", [](int, const char* payload) { setServoPosition(windowServo, payload); }},
+    { -1, "SET/DOOR_SERVO", [](int, const char* payload) { setServoPosition(doorServo, payload); }},
+    { -1, "SET/LCD_DISPLAY", setLCDContent },
+    { -1, "SET/RGB_LED", setRGBColor },
 };
 
 const int numEquipments = sizeof(equipmentList) / sizeof(Equipment);
@@ -31,11 +34,21 @@ void setupEquipments() {
     pinMode(RIGHT_BTN_PIN, OUTPUT);
     pinMode(SMOKE_SENSOR_PIN, OUTPUT);
 
+    // Servos
     windowServo.attach(WINDOW_SERVO_PIN);
     doorServo.attach(DOOR_SERVO_PIN);
 
+    // LCD Display
     lcd.init();
     lcd.backlight();
+
+    // Temperature & Humidity sensors
+    dht.begin();
+
+    // RGB LED
+    pixels.begin(); // Initialize NeoPixel strip object
+    pixels.show(); // Turn off all pixels
+    pixels.setBrightness(75); // Set brightness to 75 out of 255
 }
 
 // 🎯 Gestion des équipements numériques (digitalWrite)
@@ -96,5 +109,23 @@ void setBuzzerState(int pin, const char* payload) {
     } else {
         currentBuzzerFrequency = 0;
         noTone(pin); // Désactive le buzzer
+    }
+}
+
+void setRGBColor(int, const char* payload) {
+    // Le payload doit être sous forme "R,G,B" (ex: "255,0,127")
+    int r, g, b;
+    if (sscanf(payload, "%d,%d,%d", &r, &g, &b) == 3) { // Parse le payload
+        if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+            for (int i = 0; i < pixels.numPixels(); i++) {
+                pixels.setPixelColor(i, pixels.Color(r, g, b)); // Applique la couleur
+            }
+            pixels.show(); // Met à jour la LED RGB
+            delay(50);
+        } else {
+            Serial.println("Valeurs RGB hors des limites (0-255) !");
+        }
+    } else {
+        Serial.println("Format du payload RGB invalide ! Utiliser 'R,G,B'.");
     }
 }
