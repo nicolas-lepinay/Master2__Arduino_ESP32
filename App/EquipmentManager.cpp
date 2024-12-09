@@ -69,7 +69,7 @@ void setServoPosition(Servo& servo, const char* payload) {
 
 // 🎯 Gestion du LCD
 void setLCDContent(int, const char* payload) {
-    if (payload == nullptr || strcmp(payload, "") == 0 || strcmp(payload, "null") == 0) {
+    if (payload == nullptr || strcmp(payload, "") == 0) {
         lcd.clear(); // Efface l'écran si le payload est vide ou null
         strcpy(lcdCurrentContent, ""); // Réinitialise le contenu local
     } else {

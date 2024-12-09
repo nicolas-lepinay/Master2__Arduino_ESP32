@@ -2,7 +2,6 @@
 #include "PinList.h"
 #include "EquipmentManager.h"
 #include "MQTTManager.h"
-#include "APIManager.h"
 
 // 📡 Configuration WiFi
 const char* WIFI_SSID = "nicolas";
