@@ -1,13 +1,14 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <esp_eap_client.h>
-#include "env.h"
+#include "Env.h"
 #include "EquipmentManager.h"
 #include "MQTTManager.h"
 
 // 🔄 Timer pour les données périodiques
 unsigned long lastUpdate = 0;
 const unsigned long interval = 60000; // 1 minute
+const char* SSID = "WiFi@YNOV";
 
 WiFiClientSecure secureClient;
 PubSubClient client(secureClient);
