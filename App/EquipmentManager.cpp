@@ -3,7 +3,7 @@
 // 🎯 Initialisation des équipements
 Servo windowServo;
 Servo doorServo;
-LiquidCrystal_I2C lcd(LCD_ADDRESS, 16, 2);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 Equipment equipmentList[] = {
     { LED_PIN, "SET/LED", setDigitalOutput },
