@@ -6,8 +6,8 @@
 #include "RoutineManager.h"
 #include "EquipmentManager.h"
 
-extern WiFiClientSecure secureClient;
-extern PubSubClient client;
+extern WiFiClientSecure secureClient; // Déclarée mais définie dans App.ino
+extern PubSubClient client;        // Déclarée mais définie dans App.ino
 
 void setupMQTT();
 void mqttReconnect();

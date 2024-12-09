@@ -1,15 +1,11 @@
 #include "MQTTManager.h"
 #include <ArduinoJson.h>
 
-// 📡 Configuration MQTT sécurisé
-WiFiClientSecure secureClient;
-PubSubClient client(secureClient);
-
 // 📋 Configuration serveur MQTT
 const char* mqtt_host = "b5f2bf8397624117be2142697084afa1.s1.eu.hivemq.cloud"; // Adresse du broker MQTT
 const int mqtt_port = 8883; // Port sécurisé
-const char* mqtt_username = "nicolas"; // Nom d'utilisateur
-const char* mqtt_password = "abcd1234"; // Mot de passe
+const char* mqtt_username = "nicolas";
+const char* mqtt_password = "Abcd1234";
 
 // 🔧 Configuration MQTT
 void setupMQTT() {

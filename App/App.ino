@@ -1,27 +1,22 @@
 #include <WiFi.h>
-#include "PinList.h"
+#include <WiFiClientSecure.h>
+#include <esp_eap_client.h>
+#include "env.h"
 #include "EquipmentManager.h"
 #include "MQTTManager.h"
-
-// 📡 Configuration WiFi
-const char* WIFI_SSID = "nicolas";
-const char* WIFI_PASSWORD = "abcd1234";
 
 // 🔄 Timer pour les données périodiques
 unsigned long lastUpdate = 0;
 const unsigned long interval = 60000; // 1 minute
 
+WiFiClientSecure secureClient;
+PubSubClient client(secureClient);
+
 // ⚙️ Setup
 void setup() {
     Serial.begin(115200);
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-    while (WiFi.status() != WL_CONNECTED) {
-        Serial.println("Connexion au WiFi...");
-        delay(1000);
-    }
-    Serial.println("Connecté au WiFi.");
-
+    setupWifi();
+    secureClient.setInsecure();
     setupEquipments();
     setupMQTT();
 }
@@ -37,4 +32,31 @@ void loop() {
         lastUpdate = millis();
         publishData(); // Publications des données des capteurs sur MQTT
     }
+}
+
+void setupWifi() {
+  delay(10);
+  Serial.print("Connecting to ");
+  Serial.println(SSID);
+  WiFi.disconnect(true);
+  delay(100);
+  WiFi.mode(WIFI_STA);
+
+  Serial.print("Connecting to network with client: ");
+  esp_eap_client_set_identity((const unsigned char*)EAP_IDENTITY, strlen(EAP_IDENTITY));
+  esp_eap_client_set_username((const unsigned char*)EAP_IDENTITY, strlen(EAP_IDENTITY));
+  esp_eap_client_set_password((const unsigned char*)EAP_PASSWORD, strlen(EAP_PASSWORD));
+  esp_wifi_sta_enterprise_enable();
+
+  WiFi.begin(SSID);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
 }
