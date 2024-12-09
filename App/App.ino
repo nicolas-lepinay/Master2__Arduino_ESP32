@@ -7,7 +7,7 @@
 
 // 🔄 Timer pour les données périodiques
 unsigned long lastUpdate = 0;
-const unsigned long interval = 60000; // 1 minute
+const unsigned long interval = 2000; // (2000 = 2 secondes, 60000 = 60 secondes)
 const char* SSID = "WiFi@YNOV";
 
 WiFiClientSecure secureClient;

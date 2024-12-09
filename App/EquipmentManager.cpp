@@ -23,16 +23,16 @@ char lcdCurrentContent[33] = ""; // Stocke le texte actuel du LCD (16 colonnes x
 
 void setupEquipments() {
     pinMode(LED_PIN, OUTPUT);
-    pinMode(MOTION_SENSOR_PIN, OUTPUT);
+    pinMode(MOTION_SENSOR_PIN, INPUT);
     pinMode(LEFT_BTN_PIN, OUTPUT);
     pinMode(HUMIDITY_SENSOR_PIN, OUTPUT);
     pinMode(TEMP_SENSOR_PIN, OUTPUT);
     pinMode(FAN_PIN, OUTPUT);
-    pinMode(GAS_SENSOR_PIN, OUTPUT);  
+    pinMode(GAS_SENSOR_PIN, INPUT);  
     pinMode(BUZZER_PIN, OUTPUT);
     pinMode(RGB_LED_PIN, OUTPUT);
-    pinMode(RIGHT_BTN_PIN, OUTPUT);
-    pinMode(SMOKE_SENSOR_PIN, OUTPUT);
+    pinMode(RIGHT_BTN_PIN, INPUT);
+    pinMode(SMOKE_SENSOR_PIN, INPUT);
 
     // Servos
     windowServo.attach(WINDOW_SERVO_PIN);
