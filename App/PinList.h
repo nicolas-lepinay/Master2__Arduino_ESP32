@@ -14,6 +14,6 @@ const int GAS_SENSOR_PIN = 23;          // 💨
 const int BUZZER_PIN = 25;              // 🔊
 const int RGB_LED_PIN = 26;             // 🚦
 const int RIGHT_BTN_PIN = 27;           // 👉
-const int SMOKE_SENSOR_PIN = 34;        // 🔥
+const int STEAM_SENSOR_PIN = 34;        // 🌫️
 
 #endif
