@@ -17,7 +17,6 @@ PubSubClient client(secureClient);
 void setup() {
     Serial.begin(115200);
     setupWifi();
-    secureClient.setInsecure();
     setupEquipments();
     setupMQTT();
 }
@@ -35,6 +34,7 @@ void loop() {
     }
 }
 
+// 🔧 Mise en place du WIFI
 void setupWifi() {
   delay(10);
   Serial.print("Connecting to ");

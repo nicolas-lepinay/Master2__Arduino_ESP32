@@ -24,15 +24,15 @@ char lcdCurrentContent[33] = ""; // Stocke le texte actuel du LCD (16 colonnes x
 void setupEquipments() {
     pinMode(LED_PIN, OUTPUT);
     pinMode(MOTION_SENSOR_PIN, INPUT);
-    pinMode(LEFT_BTN_PIN, OUTPUT);
-    pinMode(HUMIDITY_SENSOR_PIN, OUTPUT);
-    pinMode(TEMP_SENSOR_PIN, OUTPUT);
+    pinMode(LEFT_BTN_PIN, INPUT);
+    pinMode(HUMIDITY_SENSOR_PIN, INPUT);
+    pinMode(TEMP_SENSOR_PIN, INPUT);
     pinMode(FAN_PIN, OUTPUT);
     pinMode(GAS_SENSOR_PIN, INPUT);  
     pinMode(BUZZER_PIN, OUTPUT);
     pinMode(RGB_LED_PIN, OUTPUT);
     pinMode(RIGHT_BTN_PIN, INPUT);
-    pinMode(SMOKE_SENSOR_PIN, INPUT);
+    pinMode(STEAM_SENSOR_PIN, INPUT);
 
     // Servos
     windowServo.attach(WINDOW_SERVO_PIN);
@@ -112,6 +112,7 @@ void setBuzzerState(int pin, const char* payload) {
     }
 }
 
+// 🎯 Gestion des LEDs RGB
 void setRGBColor(int, const char* payload) {
     // Le payload doit être sous forme "R,G,B" (ex: "255,0,127")
     int r, g, b;
