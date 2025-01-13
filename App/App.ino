@@ -6,8 +6,9 @@
 #include "MQTTManager.h"
 
 // 🔄 Timer pour les données périodiques
-unsigned long lastUpdate = 0;
-const unsigned long interval = 2000; // (2000 = 2 secondes, 60000 = 60 secondes)
+long lastUpdate = 0;
+const long interval = 60000; // (2000 = 2 secondes, 60000 = 60 secondes)
+const long shortInterval = 20000;
 const char* SSID = "WiFi@YNOV";
 
 WiFiClientSecure secureClient;
@@ -28,8 +29,10 @@ void loop() {
     }
     client.loop();
 
-    if (millis() - lastUpdate >= interval) {
-        lastUpdate = millis();
+    long currentMillis = millis();
+
+    if (currentMillis - lastUpdate >= interval) {
+        lastUpdate = currentMillis;
         publishData(); // Publications des données des capteurs sur MQTT
     }
 }

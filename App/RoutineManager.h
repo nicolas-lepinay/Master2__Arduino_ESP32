@@ -7,11 +7,11 @@ struct Routine {
   const char* name;
   const char* topics[10];
   const char* payloads[10];
-  int numActions;
+  short int numActions;
 };
 
 extern Routine routines[];
-extern const int numRoutines;
+extern const short int numRoutines;
 
 void executeRoutine(const char* routineName, PubSubClient& client);
 
