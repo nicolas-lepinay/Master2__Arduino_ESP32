@@ -28,10 +28,8 @@ void loop() {
     }
     client.loop();
 
-    long currentMillis = millis();
-
-    if (currentMillis - lastUpdate >= interval) {
-        lastUpdate = currentMillis;
+    if (millis() - lastUpdate >= interval) {
+        lastUpdate = millis();
         publishData(); // Publications des données des capteurs sur MQTT
     }
 }
