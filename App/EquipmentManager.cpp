@@ -11,12 +11,8 @@ Equipment equipmentList[] = {
   { LED_PIN, "SET/LED", setDigitalOutput },
   { FAN_PIN, "SET/FAN", setAnalogOutput },
   { BUZZER_PIN, "SET/BUZZER", setBuzzerState },
-  { -1, "SET/WINDOW_SERVO", [](short int, const char* payload) {
-     setServoPosition(windowServo, payload);
-   } },
-  { -1, "SET/DOOR_SERVO", [](short int, const char* payload) {
-     setServoPosition(doorServo, payload);
-   } },
+  { -1, "SET/WINDOW_SERVO", [](short int, const char* payload) { setServoPosition(windowServo, payload); } },
+  { -1, "SET/DOOR_SERVO", [](short int, const char* payload) { setServoPosition(doorServo, payload); } },
   { -1, "SET/LCD_DISPLAY", setLCDContent },
   { -1, "SET/RGB_LED", setRGBColor },
 };
