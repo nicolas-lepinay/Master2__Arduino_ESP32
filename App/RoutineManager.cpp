@@ -15,16 +15,16 @@ Routine routines[] = {
     },
 };
 
-const int numRoutines = sizeof(routines) / sizeof(Routine);
+const short int numRoutines = sizeof(routines) / sizeof(Routine);
 
 void executeRoutine(const char* routineName, PubSubClient& client) {
-  for (int i = 0; i < numRoutines; i++) {
-    if (strcmp(routines[i].name, routineName) == 0) {
-      for (int j = 0; j < routines[i].numActions; j++) {
-        client.publish(routines[i].topics[j], routines[i].payloads[j]);
-      }
-      Serial.println(String("Routine ") + routineName + " exécutée.");
-      break;
+    for (short int i = 0; i < numRoutines; i++) {
+        if (strcmp(routines[i].name, routineName) == 0) {
+            for (short int j = 0; j < routines[i].numActions; j++) {
+                client.publish(routines[i].topics[j], routines[i].payloads[j]);
+            }
+            Serial.println(String("Routine ") + routineName + " exécutée.");
+            break;
+        }
     }
-  }
 }

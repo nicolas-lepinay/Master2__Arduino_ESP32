@@ -18,17 +18,17 @@ void setupMQTT() {
 // 🔄 Reconnexion MQTT
 void mqttReconnect() {
     while (!client.connected()) {
-        Serial.println("Connexion au serveur MQTT...");
+        Serial.println(F("Connexion au serveur MQTT..."));
         if (client.connect("ESP32Client", mqtt_username, mqtt_password)) {
-            Serial.println("Connecté au serveur MQTT sécurisé !");
+            Serial.println(F("Connecté au serveur MQTT sécurisé !"));
             // Abonnements aux topics des équipements
-            for (int i = 0; i < numEquipments; i++) {
+            for (short int i = 0; i < numEquipments; i++) {
                 client.subscribe(equipmentList[i].topic);
             }
             // Abonnement au topic des routines
             client.subscribe("TRIGGER/ROUTINE");
         } else {
-            Serial.print("Échec de connexion, code : ");
+            Serial.print(F("Échec de connexion, code : "));
             Serial.println(client.state());
             delay(5000); // Réessayer après 5 secondes
         }
@@ -48,60 +48,62 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     }
 
     // 📋 Gestion des équipements individuels
-    for (int i = 0; i < numEquipments; i++) {
+    for (short int i = 0; i < numEquipments; i++) {
         if (strcmp(topic, equipmentList[i].topic) == 0) {
-        equipmentList[i].action(equipmentList[i].pin, message);
-        // Envoi de confirmation via MQTT
-        String confirmMessage = String("Equipment ") + equipmentList[i].topic + " set with payload: " + message;
-        client.publish("CONFIRM", confirmMessage.c_str());
-        break;
+            equipmentList[i].action(equipmentList[i].pin, message);
+            // Envoi de confirmation via MQTT
+            char confirmMessage[100];
+            snprintf(confirmMessage, sizeof(confirmMessage), "Equipment %s set with payload: %s", equipmentList[i].topic, message);
+            client.publish("CONFIRM", confirmMessage);
+            break;
         }
     }
 }
 
-
 // 📌 Publication d'un événement sur MQTT
-void publishEvent(const char* equipmentEsp32Id, const char* houseId, const bool state, const char* value, const char* unit) {
+void publishEvent(const char* equipmentEsp32Id, const char* houseId, bool state, const char* value, const char* unit) {
     // Préparation du payload JSON
-    DynamicJsonDocument doc(256);
+    StaticJsonDocument<128> doc; // Use StaticJsonDocument
     doc["equipmentEsp32Id"] = equipmentEsp32Id;
     doc["houseId"] = houseId;
     doc["state"] = state;
     doc["value"] = value;
     doc["unit"] = unit;
 
-    String payload;
+    char payload[128];
     serializeJson(doc, payload);
 
     const char* topic = "ADD/EVENT";
-    if (client.publish(topic, payload.c_str())) {
-        Serial.println("Événement publié avec succès sur MQTT !");
+    if (client.publish(topic, payload)) {
+        Serial.println(F("Événement publié avec succès sur MQTT !"));
     } else {
-        Serial.println("Échec de la publication MQTT !");
+        Serial.println(F("Échec de la publication MQTT !"));
     }
 }
 
 // 📌 Collecte et publication des données des capteurs
 void publishData() {
-    const char* houseId = "KEVIN";
+    const char houseId[] PROGMEM = "KEVIN";
 
     // Capteur d'humidité
-    //int humidityValue = analogRead(HUMIDITY_SENSOR_PIN);
-    float humidityValue = dht.readHumidity();
-    publishEvent("HUMIDITY_SENSOR", houseId, true, String(humidityValue).c_str(), "%");
+    int humidityValue = dht.readHumidity() * 100;
+    char humidityStr[10];
+    snprintf(humidityStr, sizeof(humidityStr), "%d", humidityValue / 100);
+    publishEvent("HUMIDITY_SENSOR", houseId, true, humidityStr, "%");
 
     // Capteur de température
-    //int temperatureValue = analogRead(TEMP_SENSOR_PIN);
-    float temperatureValue = dht.readTemperature();
-    publishEvent("TEMP_SENSOR", houseId, true, String(temperatureValue).c_str(), "°C");
+    int temperatureValue = dht.readTemperature() * 100;
+    char temperatureStr[10];
+    snprintf(temperatureStr, sizeof(temperatureStr), "%d", temperatureValue / 100);
+    publishEvent("TEMP_SENSOR", houseId, true, temperatureStr, "°C");
 
     // Capteur de gaz
     bool gasDetected = digitalRead(GAS_SENSOR_PIN);
     publishEvent("GAS_SENSOR", houseId, gasDetected, gasDetected ? "DETECTED" : "NOT_DETECTED", nullptr);
 
     // Détecteur de fumée
-    bool smokeDetected = digitalRead(SMOKE_SENSOR_PIN);
-    publishEvent("SMOKE_SENSOR", houseId, smokeDetected, smokeDetected ? "DETECTED" : "NOT_DETECTED", nullptr);
+    bool steamDetected = digitalRead(STEAM_SENSOR_PIN);
+    publishEvent("STEAM_SENSOR", houseId, steamDetected, steamDetected ? "DETECTED" : "NOT_DETECTED", nullptr);
 
     // Détecteur de mouvements
     bool motionDetected = digitalRead(MOTION_SENSOR_PIN);
